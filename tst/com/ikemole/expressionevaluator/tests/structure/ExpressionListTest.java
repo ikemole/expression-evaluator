@@ -35,7 +35,7 @@ public class ExpressionListTest {
     }
 
     @Test
-    public void replace_oldNodeHasBrackets(){
+    public void replace_whenOldNodeIsBracketNode(){
         String expression = "12+(4^2)-29";
         ExpressionList expressionList = treeBuilder.buildExpressionList(expression);
         ExpressionNode bracketNode = expressionList.first().right().right();
@@ -52,7 +52,7 @@ public class ExpressionListTest {
     }
 
     @Test
-    public void replace_oldNodeIsOperator(){
+    public void replace_whenOldNodeIsOperatorNode(){
         String expression = "12+9-29";
         ExpressionList expressionList = treeBuilder.buildExpressionList(expression);
         ExpressionNode plusNode = expressionList.first().right();

@@ -14,7 +14,7 @@ public class ExpressionListBuilderTest {
     private ExpressionListBuilder builder = new ExpressionListBuilder();
 
     @Test
-    public void test1(){
+    public void buildExpressionList_simpleExpression(){
         String expression = "2*3";
         ExpressionNode[] expectedResult = {
                 new NumberNode(2),
@@ -25,7 +25,7 @@ public class ExpressionListBuilderTest {
     }
 
     @Test
-    public void test_with_spaces(){
+    public void buildExpressionList_expressionWithSpaces(){
         String expression = "12 * 3 + 5";
         ExpressionNode[] expectedResult = {
                 new NumberNode(12),
@@ -38,7 +38,7 @@ public class ExpressionListBuilderTest {
     }
 
     @Test
-    public void test_with_brackets(){
+    public void buildExpressionList_expressionWithBrackets(){
         String expression = "12+(4^2)-29";
         ExpressionNode[] expectedResults = {
                 new NumberNode(12),
@@ -51,7 +51,7 @@ public class ExpressionListBuilderTest {
     }
 
     @Test
-    public void test_nested_brackets(){
+    public void buildExpressionList_expressionWithNestedBrackets(){
         String expression = "403 + (4 ^ (2 + 1)) - 29 ^ (9 - 7)";
         ExpressionNode[] expectedResults = {
                 new NumberNode(403),
@@ -66,7 +66,7 @@ public class ExpressionListBuilderTest {
     }
 
     @Test
-    public void test_start_with_minus(){
+    public void buildExpressionList_expressionStartsWithMinus(){
         String expression = "-1 + 2^7";
         ExpressionNode[] expectedResult = {
                 new NumberNode(0),
