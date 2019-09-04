@@ -9,6 +9,7 @@ public abstract class ExpressionNode {
     private ExpressionNodeType type;
     private ExpressionNode left;
     private ExpressionNode right;
+    private int position; // this node's position in the expression. it's needed to determine priority.
 
     public ExpressionNode(ExpressionNodeType type){
         this.type = type;
@@ -32,6 +33,14 @@ public abstract class ExpressionNode {
 
     public void setLeft(ExpressionNode left) {
         this.left = left;
+    }
+
+    public int position() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }
 

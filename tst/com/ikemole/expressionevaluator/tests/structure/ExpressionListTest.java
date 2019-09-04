@@ -10,8 +10,11 @@ import com.ikemole.expressionevaluator.tests.assertions.ExpressionListAssert;
 import com.ikemole.expressionevaluator.tests.assertions.ExpressionNodeAssert;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ExpressionListTest {
-    private ExpressionListBuilder treeBuilder = new ExpressionListBuilder();
+    private ExpressionListBuilder expressionListBuilder = new ExpressionListBuilder();
 
     @Test
     public void highestPriority_oneOperator(){
@@ -35,9 +38,30 @@ public class ExpressionListTest {
     }
 
     @Test
+    public void highestPriority_verifyOperatorOrder(){
+        String expression = "24/12+(4-2)-29^7*2";
+        ExpressionNodeType[] expectedNodeTypeOrder = {
+                ExpressionNodeType.Bracket,
+                ExpressionNodeType.Exponent,
+                ExpressionNodeType.Division,
+                ExpressionNodeType.Multiplication,
+                ExpressionNodeType.Subtraction,
+                ExpressionNodeType.Addition,
+        };
+        ExpressionList expressionList = expressionListBuilder.build(expression);
+
+        for (ExpressionNodeType expectedType : expectedNodeTypeOrder){
+            ExpressionNodeType actualType = expressionList.getHighestPriorityNode().type();
+            assertEquals(expectedType, actualType);
+        }
+
+        assertTrue(expressionList.isSolved());
+    }
+
+    @Test
     public void replace_whenOldNodeIsBracketNode(){
         String expression = "12+(4^2)-29";
-        ExpressionList expressionList = treeBuilder.buildExpressionList(expression);
+        ExpressionList expressionList = expressionListBuilder.build(expression);
         ExpressionNode bracketNode = expressionList.first().right().right();
         ExpressionNode newNode = new NumberNode(100);
         expressionList.replace(bracketNode, newNode);
@@ -54,7 +78,7 @@ public class ExpressionListTest {
     @Test
     public void replace_whenOldNodeIsOperatorNode(){
         String expression = "12+9-29";
-        ExpressionList expressionList = treeBuilder.buildExpressionList(expression);
+        ExpressionList expressionList = expressionListBuilder.build(expression);
         ExpressionNode plusNode = expressionList.first().right();
         ExpressionNode newNode = new NumberNode(100);
         expressionList.replace(plusNode, newNode);
@@ -67,7 +91,7 @@ public class ExpressionListTest {
     }
 
     private void assertHighestPriorityNode(String expression, ExpressionNode expectedNode) {
-        ExpressionList expressionList = treeBuilder.buildExpressionList(expression);
+        ExpressionList expressionList = expressionListBuilder.build(expression);
         ExpressionNode highestPriorityNode = expressionList.getHighestPriorityNode();
         ExpressionNodeAssert.assertEquals(expectedNode, highestPriorityNode);
     }

@@ -81,7 +81,7 @@ public class ExpressionListBuilderTest {
     }
 
     private void assertExpressionTree(String expression, ExpressionNode[] expectedResults){
-        ExpressionList expressionList = builder.buildExpressionList(expression);
+        ExpressionList expressionList = builder.build(expression);
 
         ExpressionListAssert.assertListContents(expressionList, expectedResults);
     }

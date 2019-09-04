@@ -32,6 +32,7 @@ public class ExpressionEvaluatorTest {
         assertExpressionResult("-1+2+3", 4);
         assertExpressionResult("-1+2-3", -2);
         assertExpressionResult("-1-2-3", -6);
+        assertExpressionResult("-1-2-3-4+5-6-7-8-9+10", -25);
         assertExpressionResult("-1 + 2^7", 127);
         assertExpressionResult("-15*2^3-5", -125);
         assertExpressionResult("-15*2^3+5", -115);

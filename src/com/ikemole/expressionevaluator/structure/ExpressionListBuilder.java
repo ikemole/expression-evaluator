@@ -19,7 +19,7 @@ public class ExpressionListBuilder {
      * @param expression A string containing a math expression
      * @return The expression list
      */
-    public ExpressionList buildExpressionList(String expression){
+    public ExpressionList build(String expression){
         ExpressionList expressionList = new ExpressionList();
 
         for (int i = 0; i < expression.length(); i++) {

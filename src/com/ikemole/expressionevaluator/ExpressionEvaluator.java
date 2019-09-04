@@ -20,7 +20,7 @@ public class ExpressionEvaluator {
      * @return The result of solving the expression
      */
     public double evaluate(String expression){
-        ExpressionList expressionList = expressionListBuilder.buildExpressionList(expression);
+        ExpressionList expressionList = expressionListBuilder.build(expression);
 
         /*
         Approach:

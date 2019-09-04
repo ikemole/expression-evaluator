@@ -9,7 +9,7 @@ public enum ExpressionNodeType {
     Exponent(5),
     Division(4),
     Multiplication(3),
-    Subtraction(2),
+    Subtraction(2), // note: we place subtraction before addition to handle negative numbers better
     Addition(1),
     Number(0);
 
