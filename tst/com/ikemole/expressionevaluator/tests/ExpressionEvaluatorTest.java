@@ -44,6 +44,31 @@ public class ExpressionEvaluatorTest {
         assertExpressionResult("-2^4", -16);
     }
 
+    @Test
+    public void evaluate_multiDivision(){
+        assertExpressionResult("2/2/2", 0.5);
+    }
+
+    @Test
+    public void evaluate_divByZero(){
+        assertExpressionResult("2/0", Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void evaluate_divByZeroNeg(){
+        assertExpressionResult("(1-2)/0", Double.NEGATIVE_INFINITY);
+    }
+
+    @Test
+    public void evaluate_divByZeroAddInfinity(){
+        assertExpressionResult("((1-2)/0)+(2/0)", Double.NEGATIVE_INFINITY);
+    }
+
+    @Test
+    public void evaluate_NaN(){
+        assertExpressionResult("0/0", Double.NaN);
+    }
+
     private void assertExpressionResult(String expression, double expectedResult){
         double actualResult = evaluator.evaluate(expression);
         Assertions.assertEquals(expectedResult, actualResult);

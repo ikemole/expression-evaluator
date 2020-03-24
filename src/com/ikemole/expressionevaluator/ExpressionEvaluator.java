@@ -32,6 +32,11 @@ public class ExpressionEvaluator {
         while (!expressionList.isSolved()){
             ExpressionNode nodeToProcess = expressionList.getHighestPriorityNode();
             double nodeResult = evaluateNode(nodeToProcess);
+
+            // If infinite or NaN, no need to continue solving the rest of the expression
+            if(Double.isInfinite(nodeResult) || Double.isNaN(nodeResult))
+               return nodeResult;
+
             ExpressionNode resultNode = new NumberNode(nodeResult);
             expressionList.replace(nodeToProcess, resultNode);
         }
