@@ -7,4 +7,9 @@ public class OperatorNode extends ExpressionNode{
     public OperatorNode(ExpressionNodeType type){
         super(type);
     }
+
+    @Override
+    public String toString() {
+        return this.type.operatorStr();
+    }
 }

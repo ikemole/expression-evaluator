@@ -1,7 +1,9 @@
 package com.ikemole.expressionevaluator;
 
+import com.ikemole.expressionevaluator.exception.BadExpressionException;
 import com.ikemole.expressionevaluator.structure.ExpressionList;
 import com.ikemole.expressionevaluator.structure.ExpressionListBuilder;
+import com.ikemole.expressionevaluator.structure.ExpressionResultWithSteps;
 import com.ikemole.expressionevaluator.structure.node.BracketNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNode;
 import com.ikemole.expressionevaluator.structure.node.NumberNode;
@@ -14,49 +16,64 @@ public class ExpressionEvaluator {
     private ExpressionListBuilder expressionListBuilder = new ExpressionListBuilder();
 
     /**
-     * Evaluate a math expression and return the value.
+     * Evaluate a math expression and return the result.
      * Example: "2+3*4" should return 14
      * @param expression A string containing an expression to be evaluated.
      * @return The result of solving the expression
      */
-    public double evaluate(String expression){
+    public double evaluate(String expression) throws BadExpressionException {
+        ExpressionResultWithSteps resultWithSteps = evaluateAndShowWorking(expression, false);
+        return resultWithSteps.getResult();
+    }
+
+    /**
+     * Evaluate a math expression and return the result along with the steps taken to solve it.
+     * @param expression A string containing an expression to be evaluated.
+     * @param showWorking Indicate whether to record the steps of solving the equation
+     * @return The result of solving the expression
+     */
+    public ExpressionResultWithSteps evaluateAndShowWorking(String expression, boolean showWorking) throws BadExpressionException {
         ExpressionList expressionList = expressionListBuilder.build(expression);
 
-        /*
-        Approach:
-        - Find the operator with the highest priority.
-        - Evaluate it (using its left and right operands).
-        - Replace that sub-expression with the result.
-        - Repeat until a single number is left.
-         */
-        while (!expressionList.isSolved()){
-            ExpressionNode nodeToProcess = expressionList.getHighestPriorityNode();
-            double nodeResult = evaluateNode(nodeToProcess);
+        if(showWorking)
+            expressionList.recordCurrentStep();
 
-            // If infinite or NaN, no need to continue solving the rest of the expression
-            if(Double.isInfinite(nodeResult) || Double.isNaN(nodeResult))
-               return nodeResult;
+        while (expressionList.hasOperators()){
+            ExpressionNode nodeToProcess = expressionList.getHighestPriorityNode();
+            double nodeResult = evaluateNode(nodeToProcess, showWorking);
+
+            if(showWorking && nodeToProcess.type() == ExpressionNodeType.Bracket)
+                expressionList.recordInnerStepsForBracket((BracketNode) nodeToProcess);
 
             ExpressionNode resultNode = new NumberNode(nodeResult);
             expressionList.replace(nodeToProcess, resultNode);
+
+            if(showWorking)
+                expressionList.recordCurrentStep();
         }
 
-        return ((NumberNode) expressionList.first()).number();
+        double nodeResult = ((NumberNode) expressionList.first()).number();
+        return new ExpressionResultWithSteps(nodeResult, expressionList.getSteps());
     }
-
 
     /**
      * Evaluate the expression at this node. The node here is usually an operator node in which case
      * we apply the operator to the values on its left and right. Alternatively, it could be a
      * bracket node in which case the inner expression is evaluated.
      */
-    private double evaluateNode(ExpressionNode node) {
+    private double evaluateNode(ExpressionNode node, boolean showWorking) throws BadExpressionException {
         if(node.type() == ExpressionNodeType.Number)
             return ((NumberNode)node).number();
 
         if(node.type() == ExpressionNodeType.Bracket){
-            String innerExpression = ((BracketNode)node).expression();
-            return evaluate(innerExpression);
+            BracketNode bracketNode = ((BracketNode)node);
+            String innerExpression = bracketNode.expression();
+            ExpressionResultWithSteps resultWithSteps = evaluateAndShowWorking(innerExpression, showWorking);
+
+            if(showWorking)
+                bracketNode.setInnerSteps(resultWithSteps.getSteps());
+
+            return resultWithSteps.getResult();
         }
 
         /*

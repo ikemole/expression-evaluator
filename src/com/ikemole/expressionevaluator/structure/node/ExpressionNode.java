@@ -6,7 +6,7 @@ package com.ikemole.expressionevaluator.structure.node;
  * Each subtype of this class gives more details on the node type.
  */
 public abstract class ExpressionNode {
-    private ExpressionNodeType type;
+    protected ExpressionNodeType type;
     private ExpressionNode left;
     private ExpressionNode right;
     private int position; // this node's position in the expression. it's needed to determine priority.

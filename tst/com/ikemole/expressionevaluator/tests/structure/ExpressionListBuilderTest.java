@@ -1,5 +1,6 @@
 package com.ikemole.expressionevaluator.tests.structure;
 
+import com.ikemole.expressionevaluator.exception.BadExpressionException;
 import com.ikemole.expressionevaluator.structure.*;
 import com.ikemole.expressionevaluator.structure.node.BracketNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNode;
@@ -7,7 +8,11 @@ import com.ikemole.expressionevaluator.structure.node.NumberNode;
 import com.ikemole.expressionevaluator.structure.node.OperatorNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNodeType;
 import com.ikemole.expressionevaluator.tests.assertions.ExpressionListAssert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ExpressionListBuilderTest {
@@ -51,6 +56,15 @@ public class ExpressionListBuilderTest {
     }
 
     @Test
+    public void buildExpressionList_incompleteBrackets_throwsException(){
+        BadExpressionException exceptionThrown = assertThrows(BadExpressionException.class, () -> {
+            String expression = "12+9-(54^8/(67-43)-29";
+            builder.build(expression);
+        });
+        assertEquals(exceptionThrown.getMessage(), "The open bracket at index 5 was not closed.");
+    }
+
+    @Test
     public void buildExpressionList_expressionWithNestedBrackets(){
         String expression = "403 + (4 ^ (2 + 1)) - 29 ^ (9 - 7)";
         ExpressionNode[] expectedResults = {
@@ -81,8 +95,12 @@ public class ExpressionListBuilderTest {
     }
 
     private void assertExpressionTree(String expression, ExpressionNode[] expectedResults){
-        ExpressionList expressionList = builder.build(expression);
-
-        ExpressionListAssert.assertListContents(expressionList, expectedResults);
+        try{
+            ExpressionList expressionList = builder.build(expression);
+            ExpressionListAssert.assertListContents(expressionList, expectedResults);
+        } catch (BadExpressionException e) {
+            e.printStackTrace();
+            Assertions.fail(e);
+        }
     }
 }

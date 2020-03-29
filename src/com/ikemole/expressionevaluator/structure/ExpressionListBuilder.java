@@ -1,5 +1,6 @@
 package com.ikemole.expressionevaluator.structure;
 
+import com.ikemole.expressionevaluator.exception.BadExpressionException;
 import com.ikemole.expressionevaluator.structure.node.BracketNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNode;
 import com.ikemole.expressionevaluator.structure.node.NumberNode;
@@ -19,7 +20,7 @@ public class ExpressionListBuilder {
      * @param expression A string containing a math expression
      * @return The expression list
      */
-    public ExpressionList build(String expression){
+    public ExpressionList build(String expression) throws BadExpressionException {
         ExpressionList expressionList = new ExpressionList();
 
         for (int i = 0; i < expression.length(); i++) {
@@ -83,7 +84,7 @@ public class ExpressionListBuilder {
      * @param startingIndex The index of the opening brackets
      * @return The content of the brackets
      */
-    private String getBracketExpression(String expression, int startingIndex) {
+    private String getBracketExpression(String expression, int startingIndex) throws BadExpressionException {
         StringBuilder sb = new StringBuilder();
         int openBracketCount = 1;
         for (int i = startingIndex + 1; i < expression.length(); i++) {
@@ -102,6 +103,10 @@ public class ExpressionListBuilder {
 
             sb.append(c);
         }
+
+        if(openBracketCount > 0)
+            throw new BadExpressionException("The open bracket at index " + startingIndex + " was not closed.");
+
         return sb.toString();
     }
 

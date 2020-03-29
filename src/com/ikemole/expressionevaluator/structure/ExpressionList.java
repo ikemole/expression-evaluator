@@ -1,8 +1,11 @@
 package com.ikemole.expressionevaluator.structure;
 
+import com.ikemole.expressionevaluator.structure.node.BracketNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNodeType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 /**
@@ -16,9 +19,11 @@ public class ExpressionList {
     private ExpressionNode last;
     private int nodeCount;
     private PriorityQueue<ExpressionNode> operatorPriorityQueue;
+    private List<String> steps;
 
     public ExpressionList(){
         initializePriorityQueue();
+        steps = new ArrayList<>();
     }
 
     private void initializePriorityQueue() {
@@ -27,7 +32,7 @@ public class ExpressionList {
         // If they're the same type, the first one in the expression gets higher priority.
         operatorPriorityQueue = new PriorityQueue<>((operator1, operator2) -> {
             if(operator2.type() != operator1.type())
-                return operator2.type().value() - operator1.type().value();
+                return operator2.type().priority() - operator1.type().priority();
             else
                 return operator1.position() - operator2.position();
         });
@@ -111,6 +116,37 @@ public class ExpressionList {
             newRight.setLeft(newNode);
             newNode.setRight(newRight);
         }
+
+        nodeToReplace.setRight(null);
+        nodeToReplace.setLeft(null);
+    }
+
+    /**
+     * Add the steps that were taken inside bracket node to this expression's steps.
+     */
+    public void recordInnerStepsForBracket(BracketNode bracketNode) {
+        List<String> innerSteps = bracketNode.getInnerSteps();
+        if(innerSteps == null || innerSteps.size() == 0)
+            return;
+
+        StringBuilder sb = new StringBuilder();
+        ExpressionNode node = first;
+
+        while (node != null){
+            if(node == bracketNode){
+                sb.append("(%s)");
+            } else {
+                sb.append(node.toString());
+            }
+
+            node = node.right();
+        }
+
+        String brFormat = sb.toString();
+        for (String innerStep : innerSteps) {
+            String step = String.format(brFormat, innerStep);
+            addStep(step);
+        }
     }
 
     public ExpressionNode first() {
@@ -122,10 +158,36 @@ public class ExpressionList {
     }
 
     /**
-     * Check if the expression is fully solved.
-     * It's solved when there is only one node in the list and the node is a number.
+     * Check if the expression still has any operators left.
+     * This can also indicate when the expression has been completely solved.
      */
-    public boolean isSolved(){
-        return operatorPriorityQueue.isEmpty();
+    public boolean hasOperators(){
+        return !operatorPriorityQueue.isEmpty();
+    }
+
+    public void recordCurrentStep(){
+        addStep(toString());
+    }
+
+    private void addStep(String step){
+        if(!steps.contains(step))
+            steps.add(step);
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        ExpressionNode node = first;
+
+        while (node != null){
+            sb.append(node.toString());
+            node = node.right();
+        }
+
+        return sb.toString();
+    }
+
+    public List<String> getSteps() {
+        return steps;
     }
 }
