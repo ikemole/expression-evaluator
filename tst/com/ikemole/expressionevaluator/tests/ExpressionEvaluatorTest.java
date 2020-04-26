@@ -43,9 +43,13 @@ public class ExpressionEvaluatorTest {
     }
 
     @Test
-    public void evaluate_minusExponents(){
-        assertExpressionResult("(-2)^4", 16);
+    public void evaluate_beginMinusExponent(){
         assertExpressionResult("-2^4", -16);
+    }
+
+    @Test
+    public void evaluate_minusExponentInBracket(){
+        assertExpressionResult("(-2)^4", 16);
     }
 
     @Test

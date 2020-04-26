@@ -1,8 +1,8 @@
 package com.ikemole.expressionevaluator;
 
 import com.ikemole.expressionevaluator.exception.BadExpressionException;
-import com.ikemole.expressionevaluator.structure.ExpressionList;
-import com.ikemole.expressionevaluator.structure.ExpressionListBuilder;
+import com.ikemole.expressionevaluator.structure.ExpressionChain;
+import com.ikemole.expressionevaluator.structure.ExpressionChainBuilder;
 import com.ikemole.expressionevaluator.structure.ExpressionResultWithSteps;
 import com.ikemole.expressionevaluator.structure.node.BracketNode;
 import com.ikemole.expressionevaluator.structure.node.ExpressionNode;
@@ -13,7 +13,7 @@ import com.ikemole.expressionevaluator.structure.node.ExpressionNodeType;
  * A class used to evaluate a math expression.
  */
 public class ExpressionEvaluator {
-    private ExpressionListBuilder expressionListBuilder = new ExpressionListBuilder();
+    private ExpressionChainBuilder expressionChainBuilder = new ExpressionChainBuilder();
 
     /**
      * Evaluate a math expression and return the result.
@@ -32,28 +32,30 @@ public class ExpressionEvaluator {
      * @param showWorking Indicate whether to record the steps of solving the equation
      * @return The result of solving the expression
      */
-    public ExpressionResultWithSteps evaluateAndShowWorking(String expression, boolean showWorking) throws BadExpressionException {
-        ExpressionList expressionList = expressionListBuilder.build(expression);
+    public ExpressionResultWithSteps evaluateAndShowWorking(String expression, boolean showWorking)
+            throws BadExpressionException
+    {
+        ExpressionChain expressionChain = expressionChainBuilder.build(expression);
 
         if(showWorking)
-            expressionList.recordCurrentStep();
+            expressionChain.recordCurrentStep();
 
-        while (expressionList.hasOperators()){
-            ExpressionNode nodeToProcess = expressionList.getHighestPriorityNode();
+        while (expressionChain.hasOperators()){
+            ExpressionNode nodeToProcess = expressionChain.getHighestPriorityNode();
             double nodeResult = evaluateNode(nodeToProcess, showWorking);
 
             if(showWorking && nodeToProcess.type() == ExpressionNodeType.Bracket)
-                expressionList.recordInnerStepsForBracket((BracketNode) nodeToProcess);
+                expressionChain.recordInnerStepsForBracket((BracketNode) nodeToProcess);
 
             ExpressionNode resultNode = new NumberNode(nodeResult);
-            expressionList.replace(nodeToProcess, resultNode);
+            expressionChain.replace(nodeToProcess, resultNode);
 
             if(showWorking)
-                expressionList.recordCurrentStep();
+                expressionChain.recordCurrentStep();
         }
 
-        double nodeResult = ((NumberNode) expressionList.first()).number();
-        return new ExpressionResultWithSteps(nodeResult, expressionList.getSteps());
+        double nodeResult = ((NumberNode) expressionChain.first()).number();
+        return new ExpressionResultWithSteps(nodeResult, expressionChain.getSteps());
     }
 
     /**
