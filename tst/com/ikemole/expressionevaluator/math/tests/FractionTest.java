@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,18 +62,21 @@ public class FractionTest {
 
     private static Stream<Arguments> addExamples(){
         return Stream.of(
+                Arguments.of(new String[]{"1/3"}, "1/3"),
                 Arguments.of(new String[]{"1/2", "1/2"}, "1/1"),
                 Arguments.of(new String[]{"1/1", "1/1"}, "2/1"),
-                Arguments.of(new String[]{"1/3", "1/4"}, "7/12")
+                Arguments.of(new String[]{"5/1", "1/5"}, "26/5"),
+                Arguments.of(new String[]{"1/3", "1/4"}, "7/12"),
+                Arguments.of(new String[]{"1/3", "1/4", "1/12"}, "2/3"),
+                Arguments.of(new String[]{"1/3", "1/4", "1/12", "7/21"}, "1/1")
         );
     }
 
     @ParameterizedTest
     @MethodSource("addExamples")
     public void addFractionTest(String[] fractionsToAdd, String expectedResult){
-        var fraction1 = new Fraction(fractionsToAdd[0]);
-        var fraction2 = new Fraction(fractionsToAdd[1]);
-        var result = Fraction.add(fraction1, fraction2);
+        Fraction[] fractions = Arrays.stream(fractionsToAdd).map(Fraction::new).toArray(Fraction[]::new);
+        var result = Fraction.add(fractions);
         assertEquals(expectedResult, result.toString());
     }
 }
