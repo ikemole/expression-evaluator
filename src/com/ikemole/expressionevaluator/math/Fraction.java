@@ -71,7 +71,7 @@ public class Fraction {
 
     /**
      * Add up an array of fractions.
-     * @param fractions
+     * @param fractions the fractions to add
      */
     public static Fraction add(Fraction[] fractions){
         var denominators = Arrays.stream(fractions).mapToInt(Fraction::getDenominator).toArray();
@@ -96,6 +96,19 @@ public class Fraction {
         var newMinuendNumerator = (denominatorLcm / minuend.getDenominator()) * minuend.getNumerator();
         var newSubtrahendNumerator = (denominatorLcm / subtrahend.getDenominator()) * subtrahend.getNumerator();
         var finalFraction = new Fraction(newMinuendNumerator - newSubtrahendNumerator, denominatorLcm);
+        return finalFraction.simplify();
+    }
+
+    /**
+     * Divide one fraction by another
+     * @param dividend The number to be divided
+     * @param divisor The number to divide it by
+     * @return the quotient
+     */
+    public static Fraction divide(Fraction dividend, Fraction divisor){
+        var finalNumerator = dividend.numerator * divisor.denominator;
+        var finalDenominator = dividend.denominator * divisor.numerator;
+        var finalFraction = new Fraction(finalNumerator, finalDenominator);
         return finalFraction.simplify();
     }
 

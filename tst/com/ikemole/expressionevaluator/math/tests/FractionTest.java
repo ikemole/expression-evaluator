@@ -102,4 +102,22 @@ public class FractionTest {
         var result = Fraction.subtract(fraction1, fraction2);
         assertEquals(expectedResult, result.toString());
     }
+
+    private static Stream<Arguments> divideExamples(){
+        return Stream.of(
+                Arguments.of(new String[]{"1/2", "1/2"}, "1/1"),
+                Arguments.of(new String[]{"26/5", "1/5"}, "26/1"),
+                Arguments.of(new String[]{"7/12", "2/1"}, "7/24"),
+                Arguments.of(new String[]{"3/3", "1/12"}, "12/1")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("divideExamples")
+    public void divideFractionTest(String[] divideArgs, String expectedResult){
+        Fraction dividend = new Fraction(divideArgs[0]);
+        Fraction divisor = new Fraction(divideArgs[1]);
+        var result = Fraction.divide(dividend, divisor);
+        assertEquals(expectedResult, result.toString());
+    }
 }
