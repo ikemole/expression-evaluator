@@ -48,4 +48,14 @@ public class Fraction {
         return new Fraction(finalNum, finalDen);
     }
 
+    public static Fraction add(Fraction fraction1, Fraction fraction2){
+        var denominatorLcm = FactorMath.calcLCM(new int[]{fraction1.getDenominator(), fraction2.getDenominator()});
+        var fraction1Multiplier = denominatorLcm/ fraction1.getDenominator();
+        var newFraction1Numerator = fraction1Multiplier * fraction1.getNumerator();
+        var fraction2Multiplier = denominatorLcm/ fraction2.getDenominator();
+        var newFraction2Numerator = fraction2Multiplier * fraction2.getNumerator();
+        var finalFraction = new Fraction(newFraction1Numerator + newFraction2Numerator, denominatorLcm);
+        return finalFraction.simplify();
+    }
+
 }

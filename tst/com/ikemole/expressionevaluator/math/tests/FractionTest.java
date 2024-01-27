@@ -58,4 +58,21 @@ public class FractionTest {
         Fraction simplified = fraction.simplify();
         assertEquals(expected, simplified.toString());
     }
+
+    private static Stream<Arguments> addExamples(){
+        return Stream.of(
+                Arguments.of(new String[]{"1/2", "1/2"}, "1/1"),
+                Arguments.of(new String[]{"1/1", "1/1"}, "2/1"),
+                Arguments.of(new String[]{"1/3", "1/4"}, "7/12")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("addExamples")
+    public void addFractionTest(String[] fractionsToAdd, String expectedResult){
+        var fraction1 = new Fraction(fractionsToAdd[0]);
+        var fraction2 = new Fraction(fractionsToAdd[1]);
+        var result = Fraction.add(fraction1, fraction2);
+        assertEquals(expectedResult, result.toString());
+    }
 }
