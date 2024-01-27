@@ -42,38 +42,10 @@ public class Fraction {
     }
 
     public Fraction simplify(){
-        int[] n = Factorizer.factorize(numerator);
-        int[] d = Factorizer.factorize(denominator);
-
-        int ni = 0;
-        int di = 0;
-
-        while(ni < n.length && di < d.length){
-            if(n[ni] == d[di]){
-                n[ni] = 1;
-                d[di] = 1;
-                ni++;
-                di++;
-            }
-	        else if(n[ni] < d[di]){
-                ni++;
-            }
-	        else{
-                di++;
-            }
-        }
-
-        int finalNum = multiply(n);
-        int finalDen = multiply(d);
-
+        int hcf = FactorMath.calcHCF(new int[]{numerator, denominator});
+        int finalNum = numerator/hcf;
+        int finalDen = denominator/hcf;
         return new Fraction(finalNum, finalDen);
     }
 
-    private static int multiply(int[] nums){
-        int result = 1;
-        for (int num : nums) {
-            result = result * num;
-        }
-        return result;
-    }
 }
