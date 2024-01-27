@@ -86,16 +86,16 @@ public class Fraction {
     }
 
     /**
-     * Calculate fraction1 minus fraction2
-     * @param fraction1
-     * @param fraction2
-     * @return
+     * Subtract one fraction from another
+     * @param minuend The fraction to be subtracted from
+     * @param subtrahend The number to subtract
+     * @return the result
      */
-    public static Fraction subtract(Fraction fraction1, Fraction fraction2) {
-        var denominatorLcm = FactorMath.calcLCM(new int[]{fraction1.getDenominator(), fraction2.getDenominator()});
-        var newFraction1Numerator = (denominatorLcm / fraction1.getDenominator()) * fraction1.getNumerator();
-        var newFraction2Numerator = (denominatorLcm / fraction2.getDenominator()) * fraction2.getNumerator();
-        var finalFraction = new Fraction(newFraction1Numerator - newFraction2Numerator, denominatorLcm);
+    public static Fraction subtract(Fraction minuend, Fraction subtrahend) {
+        var denominatorLcm = FactorMath.calcLCM(new int[]{minuend.getDenominator(), subtrahend.getDenominator()});
+        var newMinuendNumerator = (denominatorLcm / minuend.getDenominator()) * minuend.getNumerator();
+        var newSubtrahendNumerator = (denominatorLcm / subtrahend.getDenominator()) * subtrahend.getNumerator();
+        var finalFraction = new Fraction(newMinuendNumerator - newSubtrahendNumerator, denominatorLcm);
         return finalFraction.simplify();
     }
 
