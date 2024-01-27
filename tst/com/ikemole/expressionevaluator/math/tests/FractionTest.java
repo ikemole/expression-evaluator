@@ -48,7 +48,9 @@ public class FractionTest {
                 Arguments.of("13/39", "1/3"),
                 Arguments.of("40/100", "2/5"),
                 Arguments.of("273/8900", "273/8900"),
-                Arguments.of("273/6230", "39/890")
+                Arguments.of("273/6230", "39/890"),
+                Arguments.of("0/5", "0/1"),
+                Arguments.of("49/1", "49/1")
         );
     }
 
@@ -77,6 +79,27 @@ public class FractionTest {
     public void addFractionTest(String[] fractionsToAdd, String expectedResult){
         Fraction[] fractions = Arrays.stream(fractionsToAdd).map(Fraction::new).toArray(Fraction[]::new);
         var result = Fraction.add(fractions);
+        assertEquals(expectedResult, result.toString());
+    }
+
+    private static Stream<Arguments> subtractExamples(){
+        return Stream.of(
+                Arguments.of(new String[]{"1/2", "1/2"}, "0/1"),
+                Arguments.of(new String[]{"1/1", "1/1"}, "0/1"),
+                Arguments.of(new String[]{"26/5", "1/5"}, "5/1"),
+                Arguments.of(new String[]{"26/5", "5/1"}, "1/5"),
+                Arguments.of(new String[]{"7/12", "1/4"}, "1/3"),
+                Arguments.of(new String[]{"7/12", "1/3"}, "1/4"),
+                Arguments.of(new String[]{"3/3", "1/12"}, "11/12")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("subtractExamples")
+    public void subtractFractionTest(String[] subtractArgs, String expectedResult){
+        Fraction fraction1 = new Fraction(subtractArgs[0]);
+        Fraction fraction2 = new Fraction(subtractArgs[1]);
+        var result = Fraction.subtract(fraction1, fraction2);
         assertEquals(expectedResult, result.toString());
     }
 }
