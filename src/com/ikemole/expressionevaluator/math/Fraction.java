@@ -86,6 +86,20 @@ public class Fraction {
     }
 
     /**
+     * Multiply an array of fractions.
+     * @param fractions the fractions to add
+     */
+    public static Fraction multiply(Fraction[] fractions){
+        fractions = Arrays.stream(fractions).map(Fraction::simplify).toArray(Fraction[]::new);
+        var numerators = Arrays.stream(fractions).mapToInt(Fraction::getNumerator).toArray();
+        var denominators = Arrays.stream(fractions).mapToInt(Fraction::getDenominator).toArray();
+        var newNumerator = MathUtils.multiply(numerators);
+        var newDenominator = MathUtils.multiply(denominators);
+        var finalFraction = new Fraction(newNumerator, newDenominator);
+        return finalFraction.simplify();
+    }
+
+    /**
      * Subtract one fraction from another
      * @param minuend The fraction to be subtracted from
      * @param subtrahend The number to subtract

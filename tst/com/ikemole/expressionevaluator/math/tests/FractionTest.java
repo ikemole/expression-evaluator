@@ -120,4 +120,22 @@ public class FractionTest {
         var result = Fraction.divide(dividend, divisor);
         assertEquals(expectedResult, result.toString());
     }
+
+    private static Stream<Arguments> multiplyExamples(){
+        return Stream.of(
+                Arguments.of(new String[]{"1/2", "1/2"}, "1/4"),
+                Arguments.of(new String[]{"26/5", "5/26"}, "1/1"),
+                Arguments.of(new String[]{"7/12", "2/1"}, "7/6"),
+                Arguments.of(new String[]{"3/3", "1/12"}, "1/12"),
+                Arguments.of(new String[]{"1/3", "2/7", "4/8"}, "1/21")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplyExamples")
+    public void multiplyFractionTest(String[] multiplyArgs, String expectedResult){
+        Fraction[] fractions = Arrays.stream(multiplyArgs).map(Fraction::new).toArray(Fraction[]::new);
+        var result = Fraction.multiply(fractions);
+        assertEquals(expectedResult, result.toString());
+    }
 }
