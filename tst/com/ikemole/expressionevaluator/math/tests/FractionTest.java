@@ -1,7 +1,8 @@
 package com.ikemole.expressionevaluator.math.tests;
 
 import com.ikemole.expressionevaluator.math.Fraction;
-import com.ikemole.expressionevaluator.math.MathError;
+import com.ikemole.expressionevaluator.math.FractionError;
+import com.ikemole.expressionevaluator.math.InvalidFractionException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,57 +20,64 @@ public class FractionTest {
                 Arguments.of(2, 3, "2/3"),
                 Arguments.of(1, 1, "1/1"),
                 Arguments.of(27, 3, "27/3"),
-                Arguments.of(7, 17, "7/17")
+                Arguments.of(7, 17, "7/17"),
+                Arguments.of(-2, 3, "-2/3"),
+                Arguments.of(-1, 1, "-1/1"),
+                Arguments.of(-9, 109, "-9/109")
         );
     }
 
     @ParameterizedTest
     @MethodSource("fractionStringExamples")
-    public void toStringTest(int numerator, int denominator, String expected){
+    public void fractionToStringTest(int numerator, int denominator, String expected){
         Fraction fraction = new Fraction(numerator, denominator);
         assertEquals(expected, fraction.toString());
     }
 
     @ParameterizedTest
     @MethodSource("fractionStringExamples")
-    public void fromStringTest(int expNumerator, int expDenominator, String fractionStr){
+    public void fractionFromStringTest(int expNumerator, int expDenominator, String fractionStr){
         Fraction fraction = Fraction.Parse(fractionStr);
         assertEquals(expNumerator, fraction.getNumerator());
         assertEquals(expDenominator, fraction.getDenominator());
     }
 
-    private static Stream<Arguments> zeroDenominatorExamples() {
+    private static Stream<Arguments> invalidFractionConstructorExamples() {
         return Stream.of(
-                Arguments.of(9, 0),
-                Arguments.of(1, 0),
-                Arguments.of(0, 0)
+                Arguments.of(9, 0, FractionError.INVALID_DENOMINATOR),
+                Arguments.of(-1, 0, FractionError.INVALID_DENOMINATOR),
+                Arguments.of(0, 0, FractionError.INVALID_DENOMINATOR),
+                Arguments.of(0, -2, FractionError.INVALID_DENOMINATOR),
+                Arguments.of(3, -4, FractionError.INVALID_DENOMINATOR)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("zeroDenominatorExamples")
-    public void zeroDenominatorTest(int numerator, int denominator){
-        var ex = assertThrows(ArithmeticException.class, () -> {
+    @MethodSource("invalidFractionConstructorExamples")
+    public void invalidFractionConstructorTest(int numerator, int denominator, FractionError expectedErrorType){
+        var ex = assertThrows(InvalidFractionException.class, () -> {
             new Fraction(numerator, denominator);
         });
-        assertEquals(MathError.ZeroDenominator.toString(), ex.getMessage());
+        assertEquals(expectedErrorType, ex.getErrorType());
     }
 
-    private static Stream<Arguments> zeroDenominatorParseExamples() {
+    private static Stream<Arguments> invalidFractionParseExamples() {
         return Stream.of(
                 Arguments.of("9/0"),
                 Arguments.of("1/0"),
-                Arguments.of("0/0")
+                Arguments.of("0/0"),
+                Arguments.of("2/-3"),
+                Arguments.of("-27/-4")
         );
     }
 
     @ParameterizedTest
-    @MethodSource("zeroDenominatorParseExamples")
-    public void zeroDenominatorParseTest(String fractionStr){
-        var ex = assertThrows(ArithmeticException.class, () -> {
+    @MethodSource("invalidFractionParseExamples")
+    public void invalidFractionParseTest(String fractionStr){
+        var ex = assertThrows(InvalidFractionException.class, () -> {
             Fraction.Parse(fractionStr);
         });
-        assertEquals(MathError.ZeroDenominator.toString(), ex.getMessage());
+        assertEquals(FractionError.INVALID_FRACTION_STRING, ex.getErrorType());
     }
 
     private static Stream<Arguments> simplifyExamples() {
@@ -133,9 +141,9 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("subtractExamples")
     public void subtractFractionTest(String[] subtractArgs, String expectedResult){
-        Fraction fraction1 = Fraction.Parse(subtractArgs[0]);
-        Fraction fraction2 = Fraction.Parse(subtractArgs[1]);
-        var result = Fraction.subtract(fraction1, fraction2);
+        Fraction minuend = Fraction.Parse(subtractArgs[0]);
+        Fraction subtrahend = Fraction.Parse(subtractArgs[1]);
+        var result = Fraction.subtract(minuend, subtrahend);
         assertEquals(expectedResult, result.toString());
     }
 

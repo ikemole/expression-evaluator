@@ -5,34 +5,40 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This represents a fraction
+ * This represents a mathematical fraction which consists of a numerator (the number above the line)
+ * and a denominator (the number below the line). For example: 1/2, 45/17, etc.
  */
 public class Fraction {
     private final int numerator;
     private final int denominator;
 
-    private static final Pattern parseFractionPattern = Pattern.compile("\\s*(\\d+)\\s*/\\s*(\\d+)\\s*");
+    private static final Pattern PARSE_FRACTION_REGEX = Pattern.compile("\\s*(-?\\d+)\\s*/\\s*([1-9][0-9]*)\\s*");
 
     private static final Fraction ZERO_FRACTION = new Fraction(0, 1);
     private static final Fraction ONE_FRACTION = new Fraction(1, 1);
 
     public Fraction(int numerator, int denominator) {
-        if (denominator == 0)
-            throw new ArithmeticException(MathError.ZeroDenominator.toString());
+        if (denominator <= 0)
+            throw new InvalidFractionException(FractionError.INVALID_DENOMINATOR);
 
         this.numerator = numerator;
         this.denominator = denominator;
     }
 
-    public static Fraction Parse(String fraction) {
-        final Matcher matcher = parseFractionPattern.matcher(fraction);
+    /**
+     * Create a fraction from its string representation.
+     * @param fractionStr the string representation of a fraction
+     * @return the Fraction object
+     */
+    public static Fraction Parse(String fractionStr) {
+        final Matcher matcher = PARSE_FRACTION_REGEX.matcher(fractionStr);
         if (matcher.matches() && matcher.groupCount() == 2){
             var numerator = Integer.parseInt(matcher.group(1));
             var denominator = Integer.parseInt(matcher.group(2));
             return new Fraction(numerator, denominator);
         }
         else {
-            throw new IllegalArgumentException("The fraction string is invalid: " + fraction);
+            throw new InvalidFractionException(FractionError.INVALID_FRACTION_STRING);
         }
     }
 
