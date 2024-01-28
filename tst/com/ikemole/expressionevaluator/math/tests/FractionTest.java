@@ -1,6 +1,7 @@
 package com.ikemole.expressionevaluator.math.tests;
 
 import com.ikemole.expressionevaluator.math.Fraction;
+import com.ikemole.expressionevaluator.math.MathError;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FractionTest {
 
@@ -31,9 +33,43 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("fractionStringExamples")
     public void fromStringTest(int expNumerator, int expDenominator, String fractionStr){
-        Fraction fraction = new Fraction(fractionStr);
+        Fraction fraction = Fraction.Parse(fractionStr);
         assertEquals(expNumerator, fraction.getNumerator());
         assertEquals(expDenominator, fraction.getDenominator());
+    }
+
+    private static Stream<Arguments> zeroDenominatorExamples() {
+        return Stream.of(
+                Arguments.of(9, 0),
+                Arguments.of(1, 0),
+                Arguments.of(0, 0)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("zeroDenominatorExamples")
+    public void zeroDenominatorTest(int numerator, int denominator){
+        var ex = assertThrows(ArithmeticException.class, () -> {
+            new Fraction(numerator, denominator);
+        });
+        assertEquals(MathError.ZeroDenominator.toString(), ex.getMessage());
+    }
+
+    private static Stream<Arguments> zeroDenominatorParseExamples() {
+        return Stream.of(
+                Arguments.of("9/0"),
+                Arguments.of("1/0"),
+                Arguments.of("0/0")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("zeroDenominatorParseExamples")
+    public void zeroDenominatorParseTest(String fractionStr){
+        var ex = assertThrows(ArithmeticException.class, () -> {
+            Fraction.Parse(fractionStr);
+        });
+        assertEquals(MathError.ZeroDenominator.toString(), ex.getMessage());
     }
 
     private static Stream<Arguments> simplifyExamples() {
@@ -57,7 +93,7 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("simplifyExamples")
     public void simplifyFractionTest(String input, String expected){
-        Fraction fraction = new Fraction(input);
+        Fraction fraction = Fraction.Parse(input);
         Fraction simplified = fraction.simplify();
         assertEquals(expected, simplified.toString());
     }
@@ -77,7 +113,7 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("addExamples")
     public void addFractionTest(String[] fractionsToAdd, String expectedResult){
-        Fraction[] fractions = Arrays.stream(fractionsToAdd).map(Fraction::new).toArray(Fraction[]::new);
+        Fraction[] fractions = Arrays.stream(fractionsToAdd).map(Fraction::Parse).toArray(Fraction[]::new);
         var result = Fraction.add(fractions);
         assertEquals(expectedResult, result.toString());
     }
@@ -97,8 +133,8 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("subtractExamples")
     public void subtractFractionTest(String[] subtractArgs, String expectedResult){
-        Fraction fraction1 = new Fraction(subtractArgs[0]);
-        Fraction fraction2 = new Fraction(subtractArgs[1]);
+        Fraction fraction1 = Fraction.Parse(subtractArgs[0]);
+        Fraction fraction2 = Fraction.Parse(subtractArgs[1]);
         var result = Fraction.subtract(fraction1, fraction2);
         assertEquals(expectedResult, result.toString());
     }
@@ -115,8 +151,8 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("divideExamples")
     public void divideFractionTest(String[] divideArgs, String expectedResult){
-        Fraction dividend = new Fraction(divideArgs[0]);
-        Fraction divisor = new Fraction(divideArgs[1]);
+        Fraction dividend = Fraction.Parse(divideArgs[0]);
+        Fraction divisor = Fraction.Parse(divideArgs[1]);
         var result = Fraction.divide(dividend, divisor);
         assertEquals(expectedResult, result.toString());
     }
@@ -134,7 +170,7 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("multiplyExamples")
     public void multiplyFractionTest(String[] multiplyArgs, String expectedResult){
-        Fraction[] fractions = Arrays.stream(multiplyArgs).map(Fraction::new).toArray(Fraction[]::new);
+        Fraction[] fractions = Arrays.stream(multiplyArgs).map(Fraction::Parse).toArray(Fraction[]::new);
         var result = Fraction.multiply(fractions);
         assertEquals(expectedResult, result.toString());
     }

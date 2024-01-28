@@ -11,23 +11,27 @@ public class Fraction {
     private final int numerator;
     private final int denominator;
 
-    private static final Pattern parseFractionPattern = Pattern.compile("\\s*(\\d+)\\s*\\/\\s*(\\d+)\\s*");
+    private static final Pattern parseFractionPattern = Pattern.compile("\\s*(\\d+)\\s*/\\s*(\\d+)\\s*");
 
     private static final Fraction ZERO_FRACTION = new Fraction(0, 1);
     private static final Fraction ONE_FRACTION = new Fraction(1, 1);
 
     public Fraction(int numerator, int denominator) {
+        if (denominator == 0)
+            throw new ArithmeticException(MathError.ZeroDenominator.toString());
+
         this.numerator = numerator;
         this.denominator = denominator;
     }
 
-    public Fraction(String fraction) {
+    public static Fraction Parse(String fraction) {
         final Matcher matcher = parseFractionPattern.matcher(fraction);
         if (matcher.matches() && matcher.groupCount() == 2){
-            this.numerator = Integer.parseInt(matcher.group(1));
-            this.denominator = Integer.parseInt(matcher.group(2));
+            var numerator = Integer.parseInt(matcher.group(1));
+            var denominator = Integer.parseInt(matcher.group(2));
+            return new Fraction(numerator, denominator);
         }
-        else{
+        else {
             throw new IllegalArgumentException("The fraction string is invalid: " + fraction);
         }
     }
