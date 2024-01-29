@@ -5,8 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This represents a mathematical fraction which consists of a numerator (the number above the line)
- * and a denominator (the number below the line). For example: 1/2, 45/17, etc.
+ * This class represents a mathematical fraction. A fraction consists of
+ * a numerator (the number above the line) and a denominator (the number below the line).
+ * For example: 1/2, 45/17, etc.
  */
 public class Fraction {
     private final int numerator;
@@ -15,6 +16,7 @@ public class Fraction {
     private static final Pattern PARSE_FRACTION_REGEX = Pattern.compile("\\s*(-?\\d+)\\s*/\\s*([1-9][0-9]*)\\s*");
 
     private static final Fraction ZERO_FRACTION = new Fraction(0, 1);
+
     private static final Fraction ONE_FRACTION = new Fraction(1, 1);
 
     public Fraction(int numerator, int denominator) {
@@ -73,7 +75,7 @@ public class Fraction {
             return ONE_FRACTION;
         }
 
-        int hcf = FactorMath.calcHCF(new int[]{numerator, denominator});
+        int hcf = FactorMath.calculateHCF(new int[]{numerator, denominator});
         int finalNum = numerator/hcf;
         int finalDen = denominator/hcf;
         return new Fraction(finalNum, finalDen);
@@ -85,12 +87,12 @@ public class Fraction {
      */
     public static Fraction add(Fraction[] fractions){
         var denominators = Arrays.stream(fractions).mapToInt(Fraction::getDenominator).toArray();
-        var denominatorLcm = FactorMath.calcLCM(denominators);
+        var denominatorLcm = FactorMath.calculateLCM(denominators);
         var newNumerators = new int[fractions.length];
         for (int i = 0; i < fractions.length; i++) {
             newNumerators[i] = (denominatorLcm/fractions[i].getDenominator()) * fractions[i].getNumerator();
         }
-        var finalNumerator = MathUtils.add(newNumerators);
+        var finalNumerator = MathUtils.sum(newNumerators);
         var finalFraction = new Fraction(finalNumerator, denominatorLcm);
         return finalFraction.simplify();
     }
@@ -103,8 +105,8 @@ public class Fraction {
         fractions = Arrays.stream(fractions).map(Fraction::simplify).toArray(Fraction[]::new);
         var numerators = Arrays.stream(fractions).mapToInt(Fraction::getNumerator).toArray();
         var denominators = Arrays.stream(fractions).mapToInt(Fraction::getDenominator).toArray();
-        var newNumerator = MathUtils.multiply(numerators);
-        var newDenominator = MathUtils.multiply(denominators);
+        var newNumerator = MathUtils.product(numerators);
+        var newDenominator = MathUtils.product(denominators);
         var finalFraction = new Fraction(newNumerator, newDenominator);
         return finalFraction.simplify();
     }
@@ -116,7 +118,7 @@ public class Fraction {
      * @return the result
      */
     public static Fraction subtract(Fraction minuend, Fraction subtrahend) {
-        var denominatorLcm = FactorMath.calcLCM(new int[]{minuend.getDenominator(), subtrahend.getDenominator()});
+        var denominatorLcm = FactorMath.calculateLCM(new int[]{minuend.getDenominator(), subtrahend.getDenominator()});
         var newMinuendNumerator = (denominatorLcm / minuend.getDenominator()) * minuend.getNumerator();
         var newSubtrahendNumerator = (denominatorLcm / subtrahend.getDenominator()) * subtrahend.getNumerator();
         var finalFraction = new Fraction(newMinuendNumerator - newSubtrahendNumerator, denominatorLcm);
@@ -130,9 +132,14 @@ public class Fraction {
      * @return the quotient
      */
     public static Fraction divide(Fraction dividend, Fraction divisor){
+        if (divisor.numerator == 0){
+            throw new ArithmeticException("Cannot divide by zero.");
+        }
+
         var finalNumerator = dividend.numerator * divisor.denominator;
         var finalDenominator = dividend.denominator * divisor.numerator;
 
+        // Move negative sign to the numerator, if necessary
         if (finalDenominator < 0){
             finalDenominator = Math.abs(finalDenominator);
             finalNumerator = -1 * finalNumerator;

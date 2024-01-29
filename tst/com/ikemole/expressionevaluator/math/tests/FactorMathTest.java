@@ -2,7 +2,7 @@ package com.ikemole.expressionevaluator.math.tests;
 
 import com.ikemole.expressionevaluator.math.FactorMath;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -47,7 +47,7 @@ public class FactorMathTest {
     @ParameterizedTest
     @MethodSource("hcfExamples")
     public void calcHCFTests(int[] nums, int expectedHcf){
-        var actual = FactorMath.calcHCF(nums);
+        var actual = FactorMath.calculateHCF(nums);
         assertEquals(expectedHcf, actual);
     }
 
@@ -65,7 +65,7 @@ public class FactorMathTest {
     @ParameterizedTest
     @MethodSource("lcmExamples")
     public void calcLCMTests(int nums[], int expectedLcm){
-        var actual = FactorMath.calcLCM(nums);
+        var actual = FactorMath.calculateLCM(nums);
         assertEquals(expectedLcm, actual);
     }
 }

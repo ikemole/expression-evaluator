@@ -3,6 +3,7 @@ package com.ikemole.expressionevaluator.math.tests;
 import com.ikemole.expressionevaluator.math.Fraction;
 import com.ikemole.expressionevaluator.math.FractionError;
 import com.ikemole.expressionevaluator.math.InvalidFractionException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -55,9 +56,7 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("invalidFractionConstructorExamples")
     public void invalidFractionConstructorTest(int numerator, int denominator, FractionError expectedErrorType){
-        var ex = assertThrows(InvalidFractionException.class, () -> {
-            new Fraction(numerator, denominator);
-        });
+        var ex = assertThrows(InvalidFractionException.class, () -> new Fraction(numerator, denominator));
         assertEquals(expectedErrorType, ex.getErrorType());
     }
 
@@ -74,9 +73,7 @@ public class FractionTest {
     @ParameterizedTest
     @MethodSource("invalidFractionParseExamples")
     public void invalidFractionParseTest(String fractionStr){
-        var ex = assertThrows(InvalidFractionException.class, () -> {
-            Fraction.Parse(fractionStr);
-        });
+        var ex = assertThrows(InvalidFractionException.class, () -> Fraction.Parse(fractionStr));
         assertEquals(FractionError.INVALID_FRACTION_STRING, ex.getErrorType());
     }
 
@@ -176,6 +173,13 @@ public class FractionTest {
         Fraction divisor = Fraction.Parse(divideArgs[1]);
         var result = Fraction.divide(dividend, divisor);
         assertEquals(expectedResult, result.toString());
+    }
+
+    @Test
+    public void divideByZeroTest(){
+        var dividend = Fraction.Parse("1/2");
+        var divisor = Fraction.Parse("0/1");
+        assertThrows(ArithmeticException.class, () -> Fraction.divide(dividend, divisor));
     }
 
     private static Stream<Arguments> multiplyExamples(){
