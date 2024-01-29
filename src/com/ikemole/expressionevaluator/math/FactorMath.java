@@ -13,16 +13,23 @@ public class FactorMath {
      * @return an array of the prime factors
      */
     public static int[] factorize(int num){
-        if (num < 0){
-            throw new IllegalArgumentException("number is less than 0");
-        }
-
-        if (num <= 1){
+        if (num == 0){
             return new int[]{num};
         }
 
         int[] factors = new int[100];
         int i = 0;
+        if (num < 0){
+            factors[0] = -1;
+            i++;
+            num  = Math.abs(num);
+        }
+
+        // always include 1
+        factors[i] = 1;
+        i++;
+
+        // start checking for factors from 2
         int factor = 2;
         while (num > 1){
             while (num % factor == 0 && num > 1){
@@ -45,7 +52,7 @@ public class FactorMath {
     public static int calcHCF(int[] nums){
         int[][] factors = new int[nums.length][];
         for (int i = 0; i < nums.length; i++) {
-            factors[i] = factorize(nums[i]);
+            factors[i] = factorize(Math.abs(nums[i]));
         }
         var commonFactors = ArrayUtils.findCommonValues(factors);
         return MathUtils.multiply(commonFactors);
@@ -59,7 +66,7 @@ public class FactorMath {
     public static int calcLCM(int[] nums){
         int[][] factors = new int[nums.length][];
         for (int i = 0; i < nums.length; i++) {
-            factors[i] = factorize(nums[i]);
+            factors[i] = factorize(Math.abs(nums[i]));
         }
 
         var factorCounts = new HashMap<Integer, Integer>();

@@ -132,6 +132,12 @@ public class Fraction {
     public static Fraction divide(Fraction dividend, Fraction divisor){
         var finalNumerator = dividend.numerator * divisor.denominator;
         var finalDenominator = dividend.denominator * divisor.numerator;
+
+        if (finalDenominator < 0){
+            finalDenominator = Math.abs(finalDenominator);
+            finalNumerator = -1 * finalNumerator;
+        }
+
         var finalFraction = new Fraction(finalNumerator, finalDenominator);
         return finalFraction.simplify();
     }

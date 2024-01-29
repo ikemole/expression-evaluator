@@ -94,7 +94,11 @@ public class FractionTest {
                 Arguments.of("273/8900", "273/8900"),
                 Arguments.of("273/6230", "39/890"),
                 Arguments.of("0/5", "0/1"),
-                Arguments.of("49/1", "49/1")
+                Arguments.of("49/1", "49/1"),
+                Arguments.of("-2/5", "-2/5"),
+                Arguments.of("-7/49", "-1/7"),
+                Arguments.of("-34/34", "-1/1"),
+                Arguments.of("-1/1", "-1/1")
         );
     }
 
@@ -114,7 +118,9 @@ public class FractionTest {
                 Arguments.of(new String[]{"5/1", "1/5"}, "26/5"),
                 Arguments.of(new String[]{"1/3", "1/4"}, "7/12"),
                 Arguments.of(new String[]{"1/3", "1/4", "1/12"}, "2/3"),
-                Arguments.of(new String[]{"1/3", "1/4", "1/12", "7/21"}, "1/1")
+                Arguments.of(new String[]{"1/3", "1/4", "1/12", "7/21"}, "1/1"),
+                Arguments.of(new String[]{"2/3", "-1/3"}, "1/3"),
+                Arguments.of(new String[]{"-2/3", "1/3"}, "-1/3")
         );
     }
 
@@ -134,7 +140,11 @@ public class FractionTest {
                 Arguments.of(new String[]{"26/5", "5/1"}, "1/5"),
                 Arguments.of(new String[]{"7/12", "1/4"}, "1/3"),
                 Arguments.of(new String[]{"7/12", "1/3"}, "1/4"),
-                Arguments.of(new String[]{"3/3", "1/12"}, "11/12")
+                Arguments.of(new String[]{"3/3", "1/12"}, "11/12"),
+                Arguments.of(new String[]{"2/3", "-1/3"}, "1/1"),
+                Arguments.of(new String[]{"-2/3", "1/3"}, "-1/1"),
+                Arguments.of(new String[]{"-1/3", "1/3"}, "-2/3"),
+                Arguments.of(new String[]{"-1/3", "-1/3"}, "0/1")
         );
     }
 
@@ -152,7 +162,10 @@ public class FractionTest {
                 Arguments.of(new String[]{"1/2", "1/2"}, "1/1"),
                 Arguments.of(new String[]{"26/5", "1/5"}, "26/1"),
                 Arguments.of(new String[]{"7/12", "2/1"}, "7/24"),
-                Arguments.of(new String[]{"3/3", "1/12"}, "12/1")
+                Arguments.of(new String[]{"3/3", "1/12"}, "12/1"),
+                Arguments.of(new String[]{"-7/12", "2/1"}, "-7/24"),
+                Arguments.of(new String[]{"7/12", "-2/1"}, "-7/24"),
+                Arguments.of(new String[]{"-7/12", "-2/1"}, "7/24")
         );
     }
 
@@ -171,7 +184,11 @@ public class FractionTest {
                 Arguments.of(new String[]{"26/5", "5/26"}, "1/1"),
                 Arguments.of(new String[]{"7/12", "2/1"}, "7/6"),
                 Arguments.of(new String[]{"3/3", "1/12"}, "1/12"),
-                Arguments.of(new String[]{"1/3", "2/7", "4/8"}, "1/21")
+                Arguments.of(new String[]{"1/3", "2/7", "4/8"}, "1/21"),
+                Arguments.of(new String[]{"-7/12", "2/5"}, "-7/30"),
+                Arguments.of(new String[]{"7/12", "-2/5"}, "-7/30"),
+                Arguments.of(new String[]{"-7/12", "-2/5"}, "7/30"),
+                Arguments.of(new String[]{"-7/12", "-2/5", "-10/7"}, "-1/3")
         );
     }
 
