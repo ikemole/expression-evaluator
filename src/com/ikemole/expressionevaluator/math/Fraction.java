@@ -82,6 +82,14 @@ public class Fraction {
     }
 
     /**
+     * Get fraction as number
+     * @return
+     */
+    public double asNumber(){
+        return (double) numerator / denominator;
+    }
+
+    /**
      * Add up an array of fractions.
      * @param fractions the fractions to add
      */

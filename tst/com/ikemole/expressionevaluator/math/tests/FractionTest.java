@@ -8,6 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -105,6 +107,34 @@ public class FractionTest {
         Fraction fraction = Fraction.Parse(input);
         Fraction simplified = fraction.simplify();
         assertEquals(expected, simplified.toString());
+    }
+
+    private static Stream<Arguments> asNumberExamples() {
+        return Stream.of(
+                Arguments.of("8/12", 0.67),
+                Arguments.of("70/7", 10),
+                Arguments.of("3/3", 1),
+                Arguments.of("1/4", 0.25),
+                Arguments.of("-13/39", -0.33),
+                Arguments.of("0/5", 0),
+                Arguments.of("-49/1", -49)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("asNumberExamples")
+    public void asNumberTest(String fractionStr, double expected){
+        Fraction fraction = Fraction.Parse(fractionStr);
+        var number = round(fraction.asNumber(), 2);
+        assertEquals(expected, number);
+    }
+
+    private static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     private static Stream<Arguments> addExamples(){
